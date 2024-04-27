@@ -4,21 +4,22 @@
 
 using namespace std;
 
-enum class ColorUPS : int //Цвет корпуса ИБП
+
+enum class ColorUPS : int //Г–ГўГҐГІ ГЄГ®Г°ГЇГіГ±Г  Г€ГЃГЏ
 {
 	Black = 0,
 	Grey = 1,
 	White = 2,
 };
 
-enum class Working : int //Текущее состояние ИБП(работает = 1 / сломан = 0)
+enum class Working : int //Г’ГҐГЄГіГ№ГҐГҐ Г±Г®Г±ГІГ®ГїГ­ГЁГҐ Г€ГЃГЏ(Г°Г ГЎГ®ГІГ ГҐГІ = 1 / Г±Г«Г®Г¬Г Г­ = 0)
 {
 	Work = 1,
 	Broke = 0,
 };
 
 
-class UPS { //Создание родительского класса ИБП
+class UPS { //Г‘Г®Г§Г¤Г Г­ГЁГҐ Г°Г®Г¤ГЁГІГҐГ«ГјГ±ГЄГ®ГЈГ® ГЄГ«Г Г±Г±Г  Г€ГЃГЏ
 protected:
 	string name;
 	string model;
@@ -26,20 +27,20 @@ protected:
 
 
 public:
-	short output_power; //Выходное напряжение
-	short number_of_batteries; //Число АКБ
+	short output_power; //Г‚Г»ГµГ®Г¤Г­Г®ГҐ Г­Г ГЇГ°ГїГ¦ГҐГ­ГЁГҐ
+	short number_of_batteries; //Г—ГЁГ±Г«Г® ГЂГЉГЃ
 	Working is_working;
 
-	virtual ColorUPS look_at() const { return Color; } //Функция позволяет узнать цвет
-	int GetBatteries() const { return number_of_batteries; } //Функция позволяет узнать число АКБ у ИБП
-	virtual void Punch_it() {} //Пинаем ИБП ногой
+	virtual ColorUPS look_at() const { return Color; } //Г”ГіГ­ГЄГ¶ГЁГї ГЇГ®Г§ГўГ®Г«ГїГҐГІ ГіГ§Г­Г ГІГј Г¶ГўГҐГІ
+	int GetBatteries() const { return number_of_batteries; } //Г”ГіГ­ГЄГ¶ГЁГї ГЇГ®Г§ГўГ®Г«ГїГҐГІ ГіГ§Г­Г ГІГј Г·ГЁГ±Г«Г® ГЂГЉГЃ Гі Г€ГЃГЏ
+	virtual void Punch_it() {} //ГЏГЁГ­Г ГҐГ¬ Г€ГЃГЏ Г­Г®ГЈГ®Г©
 
 
 };
-class Line_interactive : public UPS // Создание дочернего класса линейно-интерактивных ИБП
+class Line_interactive : public UPS // Г‘Г®Г§Г¤Г Г­ГЁГҐ Г¤Г®Г·ГҐГ°Г­ГҐГЈГ® ГЄГ«Г Г±Г±Г  Г«ГЁГ­ГҐГ©Г­Г®-ГЁГ­ГІГҐГ°Г ГЄГІГЁГўГ­Г»Гµ Г€ГЃГЏ
 {
 protected:
-	bool sinusoidal_output_voltage; // Тип Л-И ИБП: с аппроксимированной синусоидой или полностью синусоидальным выходным напряжением
+	bool sinusoidal_output_voltage; // Г’ГЁГЇ Г‹-Г€ Г€ГЃГЏ: Г± Г ГЇГЇГ°Г®ГЄГ±ГЁГ¬ГЁГ°Г®ГўГ Г­Г­Г®Г© Г±ГЁГ­ГіГ±Г®ГЁГ¤Г®Г© ГЁГ«ГЁ ГЇГ®Г«Г­Г®Г±ГІГјГѕ Г±ГЁГ­ГіГ±Г®ГЁГ¤Г Г«ГјГ­Г»Г¬ ГўГ»ГµГ®Г¤Г­Г»Г¬ Г­Г ГЇГ°ГїГ¦ГҐГ­ГЁГҐГ¬
 public:
 	Line_interactive() : UPS() { Color = ColorUPS::Grey; }
 	ColorUPS look_at() const { return ColorUPS::Grey; }
@@ -50,10 +51,10 @@ public:
 	}
 };
 
-class Standby : public UPS //Создание дочернего класса резервных ИБП
+class Standby : public UPS //Г‘Г®Г§Г¤Г Г­ГЁГҐ Г¤Г®Г·ГҐГ°Г­ГҐГЈГ® ГЄГ«Г Г±Г±Г  Г°ГҐГ§ГҐГ°ГўГ­Г»Гµ Г€ГЃГЏ
 {
 protected:
-	short age; //Срок работы ИБП(если больше 3 лет => аккумуляторы износились ввиду частых скачков напряжения и их пора менять
+	short age; //Г‘Г°Г®ГЄ Г°Г ГЎГ®ГІГ» Г€ГЃГЏ(ГҐГ±Г«ГЁ ГЎГ®Г«ГјГёГҐ 3 Г«ГҐГІ => Г ГЄГЄГіГ¬ГіГ«ГїГІГ®Г°Г» ГЁГ§Г­Г®Г±ГЁГ«ГЁГ±Гј ГўГўГЁГ¤Гі Г·Г Г±ГІГ»Гµ Г±ГЄГ Г·ГЄГ®Гў Г­Г ГЇГ°ГїГ¦ГҐГ­ГЁГї ГЁ ГЁГµ ГЇГ®Г°Г  Г¬ГҐГ­ГїГІГј
 public:
 	Standby() : UPS() { Color = ColorUPS::White; }
 	ColorUPS look_at() const { return ColorUPS::White; }
@@ -65,10 +66,10 @@ public:
 	}
 };
 
-class Online : public UPS //Создание дочернего класса Онлайн ИБП
+class Online : public UPS //Г‘Г®Г§Г¤Г Г­ГЁГҐ Г¤Г®Г·ГҐГ°Г­ГҐГЈГ® ГЄГ«Г Г±Г±Г  ГЋГ­Г«Г Г©Г­ Г€ГЃГЏ
 {
 public:
-	bool switch_now; //Текущее состояние переключателя(автономная работа / работа от сети = 1)
+	bool switch_now; //Г’ГҐГЄГіГ№ГҐГҐ Г±Г®Г±ГІГ®ГїГ­ГЁГҐ ГЇГҐГ°ГҐГЄГ«ГѕГ·Г ГІГҐГ«Гї(Г ГўГІГ®Г­Г®Г¬Г­Г Гї Г°Г ГЎГ®ГІГ  / Г°Г ГЎГ®ГІГ  Г®ГІ Г±ГҐГІГЁ = 1)
 
 	Online() : UPS() { Color = ColorUPS::Black; }
 	ColorUPS look_at() const { return ColorUPS::Black; }
