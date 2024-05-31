@@ -3,6 +3,7 @@
 #include <iterator>
 #include <cstdlib> // для использования rand()
 #include <ctime> // для инициализации генератора случайных чисел
+#include <SQLiteCpp/SQLiteCpp.h> // для работы с SQL
 #include "header.h" // Подключаем наш заголовочный файл
 
 
@@ -258,7 +259,6 @@ public:
     }
 };
 
-// Функция для наполнения контейнера случайным количеством случайных объектов
 template<typename Container>
 void fillContainerRandomly(Container& container, size_t maxSize) {
     // Инициализация генератора случайных чисел
@@ -283,6 +283,39 @@ void fillContainerRandomly(Container& container, size_t maxSize) {
     }
 }
 
+class SQLiteUPSContainer {
+private:
+    SQLite::Database database;
+public:
+    SQLiteUPSContainer(const  string& dbFileName) : database(dbFileName) {}
+
+    void addUPS(const UPS& ups) {
+        SQLite::Statement query(database, "INSERT INTO UPS (name, model, color, output_power, number_of_batteries, is_working) VALUES (?, ?, ?, ?, ?, ?)");
+        query.bind(1, ups.name);
+        query.bind(2, ups.model);
+        query.bind(3, static_cast<int>(ups.look_at()));
+        query.bind(4, ups.output_power);
+        query.bind(5, ups.number_of_batteries);
+        query.bind(6, static_cast<int>(ups.is_working));
+        query.exec();
+    }
+
+     vector<UPS> getUPSs() {
+         vector<UPS> upsList;
+        SQLite::Statement query(database, "SELECT * FROM UPS");
+        while (query.executeStep()) {
+            UPS ups;
+            ups.name = query.getColumn(0).getString();
+            ups.model = query.getColumn(1).getString();
+            ups.Color = static_cast<ColorUPS>(query.getColumn(2).getInt());
+            ups.output_power = query.getColumn(3).getInt();
+            ups.number_of_batteries = query.getColumn(4).getInt();
+            ups.is_working = static_cast<Working>(query.getColumn(5).getInt());
+            upsList.push_back(ups);
+        }
+        return upsList;
+    }
+}
 int main() {
     // Создание контейнера
     VectorUPSContainer upsContainer;
