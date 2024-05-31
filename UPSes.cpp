@@ -127,4 +127,110 @@ public:
         bool operator==(const ArrayUPSIterator& other) const {
             return currentIndex == other.currentIndex;
         }
+
+       
+        template<typename Iterator>
+        class ReverseIterator {
+        private:
+            Iterator iterator;
+        public:
+            ReverseIterator(const Iterator& iter) : iterator(iter) {}
+
+            ReverseIterator& operator++() {
+                --iterator;
+                return *this;
+            }
+
+            ReverseIterator operator++(int) {
+                ReverseIterator tmp = *this;
+                --iterator;
+                return tmp;
+            }
+
+            bool operator==(const ReverseIterator& other) const {
+                return iterator == other.iterator;
+            }
+
+            bool operator!=(const ReverseIterator& other) const {
+                return !(*this == other);
+            }
+
+            auto& operator*() const {
+                return *iterator;
+            }
+        };
+
+        
+        template<typename Iterator, typename Predicate>
+        class FilterIterator {
+        private:
+            Iterator iterator;
+            Predicate predicate;
+        public:
+            FilterIterator(const Iterator& iter, Predicate pred) : iterator(iter), predicate(pred) {
+                while (iterator != Iterator() && !predicate(*iterator)) {
+                    ++iterator;
+                }
+            }
+
+            FilterIterator& operator++() {
+                do {
+                    ++iterator;
+                } while (iterator != Iterator() && !predicate(*iterator));
+                return *this;
+            }
+
+            FilterIterator operator++(int) {
+                FilterIterator tmp = *this;
+                ++(*this);
+                return tmp;
+            }
+
+            bool operator==(const FilterIterator& other) const {
+                return iterator == other.iterator;
+            }
+
+            bool operator!=(const FilterIterator& other) const {
+                return !(*this == other);
+            }
+
+            auto& operator*() const {
+                return *iterator;
+            }
+        };
+
+       
+        template<typename Iterator>
+        class LimitedIterator {
+        private:
+            Iterator iterator;
+            size_t count;
+            size_t currentIndex;
+        public:
+            LimitedIterator(const Iterator& iter, size_t limit) : iterator(iter), count(limit), currentIndex(0) {}
+
+            LimitedIterator& operator++() {
+                ++iterator;
+                ++currentIndex;
+                return *this;
+            }
+
+            LimitedIterator operator++(int) {
+                LimitedIterator tmp = *this;
+                ++(*this);
+                return tmp;
+            }
+
+            bool operator==(const LimitedIterator& other) const {
+                return currentIndex == other.currentIndex;
+            }
+
+            bool operator!=(const LimitedIterator& other) const {
+                return !(*this == other);
+            }
+
+            auto& operator*() const {
+                return *iterator;
+            }
+        };
 };
