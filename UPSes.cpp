@@ -22,7 +22,7 @@ public:
 
 class VectorUPSContainer : public UPSContainer {
 private:
-    std::vector<UPS> upsVector;
+     vector<UPS> upsVector;
 public:
     void addUPS(const UPS& ups) override {
         upsVector.push_back(ups);
@@ -77,12 +77,12 @@ public:
         return upsArray[index];
     }
 }
-class VectorUPSIterator : public std::iterator<std::input_iterator_tag, UPS> {
+class VectorUPSIterator : public  iterator< input_iterator_tag, UPS> {
     private:
-        std::vector<UPS>& upsVector;
+         vector<UPS>& upsVector;
         size_t currentIndex;
     public:
-        VectorUPSIterator(std::vector<UPS>& upsVector, size_t index) : upsVector(upsVector), currentIndex(index) {}
+        VectorUPSIterator( vector<UPS>& upsVector, size_t index) : upsVector(upsVector), currentIndex(index) {}
 
         VectorUPSIterator& operator++() {
             ++currentIndex;
@@ -108,7 +108,7 @@ class VectorUPSIterator : public std::iterator<std::input_iterator_tag, UPS> {
         }
     };
 
-class ArrayUPSIterator : public std::iterator<std::input_iterator_tag, UPS> {
+class ArrayUPSIterator : public  iterator< input_iterator_tag, UPS> {
     private:
         const UPS* upsArray;
         size_t currentIndex;
@@ -234,8 +234,83 @@ class LimitedIterator {
             }
         };
 
-int main()
-{
+class UPSFactory {
+public:
+    static UPS* createUPS(const  string& type, ColorUPS color) {
+        if (type == "Line_interactive") {
+            Line_interactive* ups = new Line_interactive();
+            ups->Color = color;
+            return ups;
+        }
+        else if (type == "Standby") {
+            Standby* ups = new Standby();
+            ups->Color = color;
+            return ups;
+        }
+        else if (type == "Online") {
+            Online* ups = new Online();
+            ups->Color = color;
+            return ups;
+        }
+        else {
+            return nullptr;
+        }
+    }
+};
 
+// Функция для наполнения контейнера случайным количеством случайных объектов
+template<typename Container>
+void fillContainerRandomly(Container& container, size_t maxSize) {
+    // Инициализация генератора случайных чисел
+    srand(static_cast<unsigned int>(time(nullptr)));
+    size_t numObjects = rand() % maxSize; // генерируем случайное количество объектов
 
+    for (size_t i = 0; i < numObjects; ++i) {
+        string types[] = { "Line_interactive", "Standby", "Online" };
+        int index = rand() % 3;
+        string type = types[index];
+        ColorUPS colors[] = { ColorUPS::Black, ColorUPS::Grey, ColorUPS::White };
+        index = rand() % 3;
+        ColorUPS color = colors[index];
+        UPS* ups = UPSFactory::createUPS(type, color);
+        if (ups) {
+            container.addUPS(*ups);
+            delete ups;
+        }
+        else {
+             cerr << "Error: Unknown UPS type.\n";
+        }
+    }
+}
+
+int main() {
+    // Создание контейнера
+    VectorUPSContainer upsContainer;
+
+    // Наполнение контейнера случайными объектами
+    fillContainerRandomly(upsContainer, 10);
+
+    // Использование декоратора фильтра итератора для выбора объектов UPS черного цвета
+    auto isBlack = [](const UPS& ups) { return ups.look_at() == ColorUPS::Black; };
+    using FilteredUPSIterator = FilterIterator<VectorUPSIterator, decltype(isBlack)>;
+    FilteredUPSIterator fitEnd = FilteredUPSIterator(upsContainer.end(), isBlack);
+     cout << "UPS with black color:\n";
+    for (FilteredUPSIterator fit = FilteredUPSIterator(upsContainer.begin(), isBlack); fit != fitEnd; ++fit) {
+        const UPS& ups = *fit;
+         cout << "Model: " << ups.model << ", Color: ";
+        switch (ups.look_at()) {
+        case ColorUPS::Black:
+             cout << "Black";
+            break;
+        case ColorUPS::Grey:
+             cout << "Grey";
+            break;
+        case ColorUPS::White:
+             cout << "White";
+            break;
+        }
+        cout <<  endl;
+    }
+
+    return 0;
 }
