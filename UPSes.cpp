@@ -1,6 +1,8 @@
 ﻿#include <iostream>
 #include <vector>
 #include <iterator>
+#include <cstdlib> // для использования rand()
+#include <ctime> // для инициализации генератора случайных чисел
 #include "header.h" // Подключаем наш заголовочный файл
 
 
@@ -45,7 +47,7 @@ public:
 
 class ArrayUPSContainer : public UPSContainer {
 private:
-    static const int MAX_SIZE = 100; 
+    static const int MAX_SIZE = 100;
     UPS upsArray[MAX_SIZE];
     int currentSize;
 public:
@@ -55,14 +57,14 @@ public:
             upsArray[currentSize++] = ups;
         }
         else {
-           
+
         }
     }
     void removeUPS(const UPS& ups) override {  // Реализация удаления элемента
-        
+
     }
     bool containsUPS(const UPS& ups) const override {  // Реализация проверки наличия элемента
-       
+
         return false;
     }
     void clear() override {
@@ -74,8 +76,8 @@ public:
     const UPS& getUPS(int index) const override {
         return upsArray[index];
     }
-
-    class VectorUPSIterator : public std::iterator<std::input_iterator_tag, UPS> {
+}
+class VectorUPSIterator : public std::iterator<std::input_iterator_tag, UPS> {
     private:
         std::vector<UPS>& upsVector;
         size_t currentIndex;
@@ -106,7 +108,7 @@ public:
         }
     };
 
-    class ArrayUPSIterator : public std::iterator<std::input_iterator_tag, UPS> {
+class ArrayUPSIterator : public std::iterator<std::input_iterator_tag, UPS> {
     private:
         const UPS* upsArray;
         size_t currentIndex;
@@ -127,10 +129,10 @@ public:
         bool operator==(const ArrayUPSIterator& other) const {
             return currentIndex == other.currentIndex;
         }
+    }
 
-       
-        template<typename Iterator>
-        class ReverseIterator {
+template<typename Iterator>
+class ReverseIterator {
         private:
             Iterator iterator;
         public:
@@ -159,10 +161,9 @@ public:
                 return *iterator;
             }
         };
-
-        
-        template<typename Iterator, typename Predicate>
-        class FilterIterator {
+   
+template<typename Iterator, typename Predicate>
+class FilterIterator {
         private:
             Iterator iterator;
             Predicate predicate;
@@ -199,9 +200,8 @@ public:
             }
         };
 
-       
-        template<typename Iterator>
-        class LimitedIterator {
+template<typename Iterator>
+class LimitedIterator {
         private:
             Iterator iterator;
             size_t count;
@@ -233,4 +233,9 @@ public:
                 return *iterator;
             }
         };
-};
+
+int main()
+{
+
+
+}
