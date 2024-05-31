@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <vector>
-#include "header.h" // Подключаем ваш заголовочный файл
+#include <iterator>
+#include "header.h" // Подключаем наш заголовочный файл
 
 
 using namespace std;
@@ -73,4 +74,57 @@ public:
     const UPS& getUPS(int index) const override {
         return upsArray[index];
     }
+
+    class VectorUPSIterator : public std::iterator<std::input_iterator_tag, UPS> {
+    private:
+        std::vector<UPS>& upsVector;
+        size_t currentIndex;
+    public:
+        VectorUPSIterator(std::vector<UPS>& upsVector, size_t index) : upsVector(upsVector), currentIndex(index) {}
+
+        VectorUPSIterator& operator++() {
+            ++currentIndex;
+            return *this;
+        }
+
+        VectorUPSIterator operator++(int) {
+            VectorUPSIterator tmp = *this;
+            ++(*this);
+            return tmp;
+        }
+
+        bool operator==(const VectorUPSIterator& other) const {
+            return currentIndex == other.currentIndex;
+        }
+
+        bool operator!=(const VectorUPSIterator& other) const {
+            return !(*this == other);
+        }
+
+        const UPS& operator*() const {
+            return upsVector[currentIndex];
+        }
+    };
+
+    class ArrayUPSIterator : public std::iterator<std::input_iterator_tag, UPS> {
+    private:
+        const UPS* upsArray;
+        size_t currentIndex;
+    public:
+        ArrayUPSIterator(const UPS* array, size_t index) : upsArray(array), currentIndex(index) {}
+
+        ArrayUPSIterator& operator++() {
+            ++currentIndex;
+            return *this;
+        }
+
+        ArrayUPSIterator operator++(int) {
+            ArrayUPSIterator tmp = *this;
+            ++(*this);
+            return tmp;
+        }
+
+        bool operator==(const ArrayUPSIterator& other) const {
+            return currentIndex == other.currentIndex;
+        }
 };
